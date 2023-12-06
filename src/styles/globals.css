@@ -1,3 +1,74 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+body {
+  width: 100%;
+  height: 100%;
+}
+
+.gametable-wrapper {
+  perspective: 1000px;
+  position: relative;
+  padding-bottom: 100%;
+  width: 100%;
+  height: 0;
+}
+
+.gametable {
+  transform: rotateX(30deg);
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+
+.cell {
+  transform: perspective(1000px) translate3d(0px, 0px, 0px) rotateY(-180deg);
+  transition:
+    0.2s ease-in-out transform,
+    0.2s ease-in-out box-shadow;
+  border-radius: 10px;
+  border: 1px solid;
+  border-color: rgb(213, 220, 226) rgb(213, 220, 226) rgb(184, 194, 204);
+  background-color: white;
+  box-shadow: 0 0px 40px -20px rgba(0, 0, 0, 0.2);
+
+  transform-style: preserve-3d;
+  cursor: pointer;
+}
+
+.cell:hover {
+  transform: perspective(1000px) translate3d(0px, -15px, 120px) rotateY(-180deg)
+    scale(1, 1);
+  box-shadow: 0 70px 40px -20px rgba(0, 0, 0, 0.2);
+}
+
+.cell.active {
+  transform: perspective(1000px) translate3d(0px, 0px, 0px) rotateY(0deg)
+    scale(1, 1);
+  box-shadow: 0 0px 40px -20px rgba(0, 0, 0, 0.2);
+}
+
+.face {
+  border-radius: 10px;
+  width: 100%;
+  height: 100%;
+  line-height: 260px;
+  color: white;
+  text-align: center;
+  font-weight: bold;
+  font-size: 40px;
+  backface-visibility: hidden;
+  position: absolute;
+}
+
+.front {
+  background-color: beige;
+}
+
+.back {
+  background-color: brown;
+  transform: rotateY(180deg);
+}
