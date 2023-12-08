@@ -52,7 +52,7 @@ const ScoreDisplay: FC<ScoreDisplayProps> = ({
               <h2 className="mr-1 text-lg font-semibold">{userBName}: </h2>
             </div>
             <div className="flex items-center">
-              <h2 className="mr-4 text-lg ">{stepsUserB} steps</h2>
+              <h2 className="mr-4 text-lg ">{stepsUserB} score</h2>
             </div>
           </div>
         </div>

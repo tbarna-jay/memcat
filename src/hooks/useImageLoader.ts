@@ -10,14 +10,25 @@ interface ImageLoaderHookResult {
   imageUrls: string[];
   error: unknown;
   loading: boolean;
+  progressText: string;
 }
 
 const useImageLoader = (url: string): ImageLoaderHookResult => {
   const [imageUrls, setImageUrls] = useState<string[]>([]);
   const [error, setError] = useState<unknown>(null);
   const [loading, setLoading] = useState<boolean>(true);
+  const [progressText, setProgressText] = useState<string>("");
 
   useEffect(() => {
+    let loadedImages = 0;
+    const progressCounter = (all: number) => {
+      setProgressText(
+        `${loadedImages}/${all} images loaded` +
+          Array.from({ length: loadedImages }, () => ".").join(""),
+      );
+      loadedImages += 1;
+    };
+
     const fetchData = async () => {
       const response = await fetch(url);
 
@@ -38,7 +49,11 @@ const useImageLoader = (url: string): ImageLoaderHookResult => {
         });
       });
 
-      await Promise.all(imagePromises);
+      await Promise.all(
+        imagePromises.map((_) =>
+          _.then(() => progressCounter(imagePromises.length)),
+        ),
+      );
 
       setImageUrls(imageData);
       setLoading(false);
@@ -50,7 +65,7 @@ const useImageLoader = (url: string): ImageLoaderHookResult => {
     });
   }, [url]);
 
-  return { imageUrls, error, loading };
+  return { imageUrls, error, loading, progressText };
 };
 
 export default useImageLoader;
