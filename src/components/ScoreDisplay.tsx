@@ -21,8 +21,8 @@ const ScoreDisplay: FC<ScoreDisplayProps> = ({
   finish,
 }) =>
   isOpen ? null : (
-    <div className="fixed left-3 top-3 flex">
-      <div className="">
+    <div className="flex">
+      <div className="fixed bottom-3 left-3">
         <div className="flex justify-between rounded-lg bg-white px-4 py-2 shadow">
           <div className="flex items-center">
             <h2 className="mr-1 text-lg font-semibold">{userAName}: </h2>
@@ -41,7 +41,7 @@ const ScoreDisplay: FC<ScoreDisplayProps> = ({
         </div>
       </div>
       {!!userBName && (
-        <div className="ml-2">
+        <div className="fixed bottom-3 right-3 ml-2">
           <div className="flex justify-between rounded-lg bg-white px-4 py-2 shadow">
             <div className="flex items-center">
               {activeUser === "userB" && (
@@ -58,7 +58,7 @@ const ScoreDisplay: FC<ScoreDisplayProps> = ({
         </div>
       )}
       {!!finish && (
-        <div className="ml-2">
+        <div className="fixed left-3 top-3 ml-2">
           <div className="flex justify-between rounded-lg bg-white px-4 py-2 shadow">
             <div className="flex items-center">
               <h2 className="mr-1 text-lg font-semibold">
