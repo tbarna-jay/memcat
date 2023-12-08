@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import Board from "~/components/Board";
 
 import Modal from "~/components/Modal";
+import NewGameButton from "~/components/NewGameButton";
+import ScoreDisplay from "~/components/ScoreDisplay";
 import shuffleArray from "~/helpers/shuffleArray";
 import useImageLoader from "~/hooks/useImageLoader";
 
@@ -18,12 +20,13 @@ export type cardType = {
 export type cardsType = Record<string, cardType>;
 
 export default function Home() {
-  const [stepsUserA, setStepUserA] = useState(0);
-  const [stepsUserB, setStepUserB] = useState(0);
+  const [pointsUserA, setStepUserA] = useState(0);
+  const [pointsUserB, setStepUserB] = useState(0);
   const [activeUser, setActiveUser] = useState<"userA" | "userB">("userA");
   const [userAName, setUserAName] = useState("");
   const [userBName, setUserBName] = useState("");
   const [cards, setCards] = useState<cardsType>({});
+  const [finish, setFinish] = useState(false);
   const [activeCards, setActiveCards] = useState<cardsType>({});
   const { imageUrls, error, loading } = useImageLoader(apiUrl);
 
@@ -32,14 +35,11 @@ export default function Home() {
     setIsOpen(true);
   };
 
-  const startNewGame = () => {
-    setActiveUser("userA");
-    setIsOpen(false);
-    resetGame();
-  };
+  useEffect(() => {
+    if (Object.values(cards).every(({ selected }) => selected)) setFinish(true);
+  }, [cards]);
 
   useEffect(() => {
-    console.log("activeCards effect", activeCards);
     if (Object.keys(activeCards).length) evaluate();
   }, [activeCards]);
 
@@ -54,6 +54,11 @@ export default function Home() {
   if (error || !imageUrls || imageUrls.length === 0) return <div>Error</div>;
 
   const resetGame = () => {
+    setActiveUser("userA");
+    setIsOpen(false);
+    setStepUserA(0);
+    setStepUserB(0);
+    setFinish(false);
     const cutArray = imageUrls.slice(0, 8);
     setCards(
       shuffleArray([...cutArray, ...cutArray]).reduce((prev, url) => {
@@ -69,6 +74,16 @@ export default function Home() {
 
   const isCard = (obj: unknown): obj is cardType =>
     typeof obj === "object" && obj !== null && "url" in obj;
+
+  const countSteps = (match: boolean) => {
+    const isAlone = !userBName;
+    if (isAlone) return setStepUserA((steps) => steps + 1);
+    if (!match) return;
+    const isActiveUserA = activeUser === "userA";
+    isActiveUserA
+      ? setStepUserA((steps) => steps + 1)
+      : setStepUserB((steps) => steps + 1);
+  };
 
   const evaluate = () => {
     const [card1, card2] = Object.values(activeCards);
@@ -95,8 +110,14 @@ export default function Home() {
           [id1]: { ...card1, active: false, selected },
           [id2]: { ...card2, active: false, selected },
         },
-      }),
-        setActiveCards({});
+      });
+      setActiveCards({});
+      countSteps(selected);
+      if (userAName && userBName && !selected) {
+        setActiveUser((activeUser) =>
+          activeUser === "userA" ? "userB" : "userA",
+        );
+      }
     }, 400);
   };
 
@@ -117,15 +138,18 @@ export default function Home() {
       </Head>
       <main className="relative h-screen  w-screen bg-blue-300">
         <Board cards={cards} isOpen={isOpen} onActivateCard={onActivateCard} />
-        <button
-          type="button"
-          className="fixed right-2 top-2 z-0 rounded-md bg-blue-600 p-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-800"
-          onClick={openModal}
-        >
-          New Game
-        </button>
+        <ScoreDisplay
+          stepsUserA={pointsUserA}
+          stepsUserB={pointsUserB}
+          userAName={userAName}
+          userBName={userBName}
+          activeUser={activeUser}
+          isOpen={isOpen}
+          finish={finish}
+        />
+        <NewGameButton openModal={openModal} />
         <Modal
-          startNewGame={startNewGame}
+          startNewGame={resetGame}
           isOpen={isOpen}
           userAName={userAName}
           userBName={userBName}
