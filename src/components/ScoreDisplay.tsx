@@ -1,4 +1,5 @@
 import React, { type FC } from "react";
+import getFinishText from "~/helpers/getFinishText";
 
 type ScoreDisplayProps = {
   stepsUserA: number;
@@ -8,18 +9,6 @@ type ScoreDisplayProps = {
   isOpen: boolean;
   finish: boolean;
   activeUser: "userA" | "userB";
-};
-
-const getFinishText = (
-  userAName: string,
-  userBName: string,
-  stepsUserA: number,
-  stepsUserB: number,
-) => {
-  if (!userBName) return "Finish!";
-  if (stepsUserA > stepsUserB) return userAName + " Win!";
-  if (stepsUserA < stepsUserB) return userBName + " Win!";
-  return "Tie!";
 };
 
 const ScoreDisplay: FC<ScoreDisplayProps> = ({
