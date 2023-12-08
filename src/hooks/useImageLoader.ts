@@ -7,13 +7,13 @@ interface ImageData {
 }
 
 interface ImageLoaderHookResult {
-  data: ImageData[];
+  imageUrls: string[];
   error: unknown;
   loading: boolean;
 }
 
 const useImageLoader = (url: string): ImageLoaderHookResult => {
-  const [data, setData] = useState<ImageData[]>([]);
+  const [imageUrls, setImageUrls] = useState<string[]>([]);
   const [error, setError] = useState<unknown>(null);
   const [loading, setLoading] = useState<boolean>(true);
 
@@ -25,9 +25,10 @@ const useImageLoader = (url: string): ImageLoaderHookResult => {
         throw new Error(`Error fetching data from ${url}`);
       }
 
-      const imageData = (await response.json()) as ImageData[];
+      const respose = (await response.json()) as ImageData[];
+      const imageData = respose.map(({ url }) => url);
 
-      const imagePromises = imageData.map(({ url: imageUrl }) => {
+      const imagePromises = imageData.map((imageUrl) => {
         return new Promise<void>((resolve, reject) => {
           const img = new Image();
           img.src = imageUrl;
@@ -39,7 +40,7 @@ const useImageLoader = (url: string): ImageLoaderHookResult => {
 
       await Promise.all(imagePromises);
 
-      setData(imageData);
+      setImageUrls(imageData);
       setLoading(false);
     };
 
@@ -49,7 +50,7 @@ const useImageLoader = (url: string): ImageLoaderHookResult => {
     });
   }, [url]);
 
-  return { data, error, loading };
+  return { imageUrls, error, loading };
 };
 
 export default useImageLoader;

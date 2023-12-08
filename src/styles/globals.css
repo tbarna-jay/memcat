@@ -5,10 +5,15 @@
 body {
   width: 100%;
   height: 100%;
+  font-family: Arial, Helvetica, sans-serif;
 }
 
-.gametable-wrapper {
+.perspective-1000 {
   perspective: 1000px;
+}
+
+.perspective-10000 {
+  perspective: 10000px;
 }
 
 .gametable {
@@ -25,12 +30,18 @@ body {
 }
 
 .cell:hover {
-  transform: perspective(1000px) translate3d(0px, -15px, 120px) rotateY(-180deg)
+  transform: perspective(1000px) translate3d(0px, -15px, 70px) rotateY(-180deg)
     scale(1, 1);
   box-shadow: 0 70px 40px -20px rgba(0, 0, 0, 0.2);
 }
 
 .cell.active {
+  transform: perspective(1000px) translate3d(0px, -15px, 70px) rotateY(0deg)
+    scale(1, 1);
+  box-shadow: 0 70px 40px -20px rgba(0, 0, 0, 0.2);
+}
+
+.cell.selected {
   transform: perspective(1000px) translate3d(0px, 0px, 0px) rotateY(0deg)
     scale(1, 1);
   box-shadow: 0 0px 40px -20px rgba(0, 0, 0, 0.2);

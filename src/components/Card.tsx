@@ -1,19 +1,21 @@
+/* eslint-disable @next/next/no-img-element */
 import Image from "next/image";
 import React, { type FC } from "react";
 
-type CellProps = {
+type CardProps = {
   url: string;
+  selected: boolean;
   active: boolean;
   onClick: () => void;
 };
 
-const Cell: FC<CellProps> = ({ url, active, onClick }) => {
+const Card: FC<CardProps> = ({ url, selected, onClick, active }) => {
   return (
     <div
       className={`cell cursor-pointer rounded-lg border border-solid border-x-[#d5dce2] border-b-[#b8c2cc] border-t-[#d5dce2] bg-white ${
-        active ? "active" : ""
-      }`}
-      onClick={() => onClick()}
+        selected ? "selected" : ""
+      } ${active ? "active" : ""}`}
+      onClick={() => (selected || active ? null : onClick())}
     >
       <div className="face absolute h-full w-full overflow-hidden rounded-lg">
         <Image
@@ -25,9 +27,11 @@ const Cell: FC<CellProps> = ({ url, active, onClick }) => {
           unoptimized
         />
       </div>
-      <div className="back face absolute h-full w-full overflow-hidden rounded-lg bg-[#f5f5dc]"></div>
+      <div className="back face absolute h-full w-full overflow-hidden rounded-lg bg-blue-50">
+        <img src="/logo.svg" alt="Logo" />
+      </div>
     </div>
   );
 };
 
-export default Cell;
+export default Card;
