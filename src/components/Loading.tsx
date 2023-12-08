@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 import React, { type FC } from "react";
 
 const Loading: FC<{ progressText: string }> = ({ progressText }) => {

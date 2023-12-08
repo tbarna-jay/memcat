@@ -1,7 +1,7 @@
-/* eslint-disable @next/next/no-img-element */
 import Head from "next/head";
 import { useEffect } from "react";
 import Board from "~/components/Board";
+import Loading from "~/components/Loading";
 
 import Modal from "~/components/Modal";
 import NewGameButton from "~/components/NewGameButton";
@@ -45,17 +45,7 @@ export default function Home() {
     }
   }, [error, imageUrls, loading]);
 
-  if (loading) {
-    return (
-      <div className="fixed left-0 top-0 flex h-full w-full flex-col items-center justify-center">
-        <div className="text-textColor/[.2] h-10 w-10 transition">
-          <img src="/logo.svg" alt="Logo" />
-        </div>
-        <div>{progressText}</div>
-      </div>
-    );
-  }
-
+  if (loading) return <Loading progressText={progressText} />;
   if (error || !imageUrls || imageUrls.length === 0) return <div>Error</div>;
 
   return (
