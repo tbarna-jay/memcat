@@ -1,5 +1,5 @@
 import React, { type FC } from "react";
-import getFinishText from "~/helpers/getFinishText";
+import getFinishText from "../helpers/getFinishText";
 
 type ScoreDisplayProps = {
   stepsUserA: number;
