@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import shuffleArray from "~/helpers/shuffleArray";
-import type { cardType, cardsType } from "~/pages";
+import shuffleArray from "../helpers/shuffleArray";
+import type { cardType, cardsType } from "../pages";
 
 const useGameLogic = () => {
   const [pointsUserA, setStepUserA] = useState(0);

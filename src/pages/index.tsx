@@ -1,13 +1,13 @@
 import Head from "next/head";
 import { useEffect } from "react";
-import Board from "~/components/Board";
-import Loading from "~/components/Loading";
+import Board from "../components/Board";
+import Loading from "../components/Loading";
 
-import Modal from "~/components/Modal";
-import NewGameButton from "~/components/NewGameButton";
-import ScoreDisplay from "~/components/ScoreDisplay";
-import useGameLogic from "~/hooks/useGameLogic";
-import useImageLoader from "~/hooks/useImageLoader";
+import Modal from "../components/Modal";
+import NewGameButton from "../components/NewGameButton";
+import ScoreDisplay from "../components/ScoreDisplay";
+import useGameLogic from "../hooks/useGameLogic";
+import useImageLoader from "../hooks/useImageLoader";
 
 const apiUrl = process.env.NEXT_PUBLIC_CAT_API_URL ?? "";
 

@@ -1,6 +1,6 @@
 import React, { type FC } from "react";
-import type { cardType, cardsType } from "~/pages";
-import Card from "~/components/Card";
+import type { cardType, cardsType } from "../pages";
+import Card from "../components/Card";
 
 type BoardProps = {
   cards: cardsType;
