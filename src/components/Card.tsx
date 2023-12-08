@@ -7,11 +7,13 @@ type CardProps = {
   selected: boolean;
   active: boolean;
   onClick: () => void;
+  id: string;
 };
 
-const Card: FC<CardProps> = ({ url, selected, onClick, active }) => {
+const Card: FC<CardProps> = ({ url, selected, onClick, active, id }) => {
   return (
     <div
+      data-testid={id}
       className={`cell cursor-pointer rounded-lg border border-solid border-x-[#d5dce2] border-b-[#b8c2cc] border-t-[#d5dce2] bg-white ${
         selected ? "selected" : ""
       } ${active ? "active" : ""}`}

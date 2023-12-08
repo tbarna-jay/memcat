@@ -20,6 +20,7 @@ const Board: FC<BoardProps> = ({ cards, isOpen, onActivateCard }) => (
           {Object.entries(cards).map(([id, card]) => (
             <Card
               key={id}
+              id={id}
               url={card.url}
               selected={card.selected}
               active={card.active}
