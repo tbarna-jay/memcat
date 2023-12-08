@@ -1,0 +1,11 @@
+**/node_modules
+**/src/tests
+
+# cypress
+**/e2e/examples
+**/fixtures/example.json
+**/cypress/videos
+**/cypress/support
+**/cypress/screenshots
+**/cypress/cache
+**/cypress/plugins
