@@ -4,7 +4,7 @@ import shuffleArray from "../helpers/shuffleArray";
 describe("shuffleArray", () => {
   it("should shuffle an array", () => {
     // Arrange
-    const originalArray = [1, 2, 3, 4, 5];
+    const originalArray = [1, 2, 3, 4, 5, 6, 7, 8];
 
     // Act
     const shuffledArray = shuffleArray([...originalArray]);

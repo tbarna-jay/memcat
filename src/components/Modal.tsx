@@ -65,7 +65,7 @@ const Modal: FC<ModalProps> = ({
                   </div>
 
                   <div className="mx-auto w-full py-2">
-                    <label htmlFor="userA">User B:</label>
+                    <label htmlFor="userB">User B:</label>
                     <div className="lb">
                       <input
                         type="text"
