@@ -42,7 +42,7 @@ export default function Home() {
       const cutArray = imageUrls.slice(0, 8);
       dispatch({
         type: "SET_IMAGE_SOURCES",
-        payload: [...cutArray, ...cutArray],
+        payload: { images: [...cutArray, ...cutArray] },
       });
     }
   }, [error, imageUrls, loading]);

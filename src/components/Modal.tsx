@@ -57,7 +57,10 @@ const Modal: FC<ModalProps> = ({
                         placeholder="Name"
                         value={userAName}
                         onChange={({ target: { value } }) =>
-                          dispatch({ type: "SET_USER_A_NAME", payload: value })
+                          dispatch({
+                            type: "SET_USER_A_NAME",
+                            payload: { userName: value },
+                          })
                         }
                       />
                     </div>
@@ -77,7 +80,10 @@ const Modal: FC<ModalProps> = ({
                         placeholder="Name"
                         value={userBName}
                         onChange={({ target: { value } }) =>
-                          dispatch({ type: "SET_USER_B_NAME", payload: value })
+                          dispatch({
+                            type: "SET_USER_B_NAME",
+                            payload: { userName: value },
+                          })
                         }
                       />
                     </div>

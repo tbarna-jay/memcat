@@ -18,6 +18,7 @@ interface StateType {
   isOpen: boolean;
   finish: boolean;
   imageUrlsSources: imageUrlsSourcesType;
+  activeCards: cardsType;
 }
 
 const initialState: StateType = {
@@ -29,6 +30,7 @@ const initialState: StateType = {
   isOpen: true,
   finish: false,
   imageUrlsSources: [],
+  activeCards: {} as cardsType,
 };
 
 export type CommonActionType = {
@@ -40,9 +42,15 @@ export type CommonActionType = {
     | "TOGGLE_ACTIVE_USER"
     | "TOGGLE_OPEN"
     | "SET_IMAGE_SOURCES"
+    | "SET_ACTIVE_CARDS"
     | "FINISH";
-
-  payload?: string | boolean | imageUrlsSourcesType;
+  payload?: {
+    card?: cardType;
+    images?: imageUrlsSourcesType;
+    userName?: string;
+    match?: boolean;
+    id?: string;
+  };
 };
 
 const reducer = (state: StateType, action: CommonActionType): StateType => {
@@ -50,7 +58,7 @@ const reducer = (state: StateType, action: CommonActionType): StateType => {
     case "INCREASE_USER_POINT":
       const isAlone = !state.userBName;
       if (isAlone) return { ...state, pointsUserA: state.pointsUserA + 1 };
-      if (!action.payload) return state;
+      if (!action.payload?.match) return state;
       if (state.activeUser === activeUserType.A) {
         return { ...state, pointsUserA: state.pointsUserA + 1 };
       }
@@ -65,9 +73,9 @@ const reducer = (state: StateType, action: CommonActionType): StateType => {
         finish: false,
       };
     case "SET_USER_A_NAME":
-      return { ...state, userAName: String(action.payload) };
+      return { ...state, userAName: String(action.payload?.userName) };
     case "SET_USER_B_NAME":
-      return { ...state, userBName: String(action.payload) };
+      return { ...state, userBName: String(action.payload?.userName) };
     case "TOGGLE_ACTIVE_USER":
       return {
         ...state,
@@ -89,7 +97,20 @@ const reducer = (state: StateType, action: CommonActionType): StateType => {
     case "SET_IMAGE_SOURCES":
       return {
         ...state,
-        imageUrlsSources: action.payload as imageUrlsSourcesType,
+        imageUrlsSources:
+          action.payload?.images ?? ([] as imageUrlsSourcesType),
+      };
+    case "SET_ACTIVE_CARDS":
+      const card =
+        action?.payload?.id && action?.payload?.card
+          ? { [action?.payload?.id || ""]: action?.payload?.card }
+          : {};
+      return {
+        ...state,
+        activeCards: {
+          ...state.activeCards,
+          ...card,
+        },
       };
     default:
       return state;
@@ -99,7 +120,6 @@ const reducer = (state: StateType, action: CommonActionType): StateType => {
 const useGameLogic = () => {
   const [state, dispatch] = useReducer(reducer, initialState);
   const [cards, setCards] = useState<cardsType>({});
-  const [activeCards, setActiveCards] = useState<cardsType>({});
 
   useEffect(() => {
     if (Object.values(cards).every(({ selected }) => selected))
@@ -107,8 +127,8 @@ const useGameLogic = () => {
   }, [cards]);
 
   useEffect(() => {
-    if (Object.keys(activeCards).length) evaluate();
-  }, [activeCards]);
+    if (Object.keys(state.activeCards).length) evaluate();
+  }, [state.activeCards]);
 
   const startNewGame = () => {
     dispatch({ type: "START_NEW_GAME" });
@@ -128,8 +148,8 @@ const useGameLogic = () => {
     typeof obj === "object" && obj !== null && "url" in obj;
 
   const evaluate = () => {
-    const [card1, card2] = Object.values(activeCards);
-    const [id1, id2] = Object.keys(activeCards);
+    const [card1, card2] = Object.values(state.activeCards);
+    const [id1, id2] = Object.keys(state.activeCards);
 
     if (
       !isCard(card1) ||
@@ -153,8 +173,8 @@ const useGameLogic = () => {
           [id2]: { ...card2, active: false, selected },
         },
       });
-      setActiveCards({});
-      dispatch({ type: "INCREASE_USER_POINT", payload: selected });
+      dispatch({ type: "SET_ACTIVE_CARDS" });
+      dispatch({ type: "INCREASE_USER_POINT", payload: { match: selected } });
       if (state.userAName && state.userBName && !selected) {
         dispatch({ type: "TOGGLE_ACTIVE_USER" });
       }
@@ -162,12 +182,12 @@ const useGameLogic = () => {
   };
 
   const onActivateCard = (id: string, card: cardType) => {
-    if (Object.keys(activeCards).length >= 2) return;
+    if (Object.keys(state.activeCards).length >= 2) return;
     setCards((_cards) => {
       _cards[id] = { ...card, active: true };
       return _cards;
     });
-    return setActiveCards((actives) => ({ ...actives, [id]: card }));
+    dispatch({ type: "SET_ACTIVE_CARDS", payload: { card, id } });
   };
 
   return {

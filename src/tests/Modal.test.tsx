@@ -87,7 +87,7 @@ describe("Modal", () => {
     // Check that setUserANameMock was called with the correct value
     expect(dispatch).toHaveBeenCalledWith({
       type: "SET_USER_A_NAME",
-      payload: "UserA",
+      payload: { userName: "UserA" },
     });
 
     // Type into the "User B" input
@@ -98,7 +98,7 @@ describe("Modal", () => {
     // Check that setUserBNameMock was called with the correct value
     expect(dispatch).toHaveBeenCalledWith({
       type: "SET_USER_B_NAME",
-      payload: "UserB",
+      payload: { userName: "UserB" },
     });
 
     // Click the "Play" button
