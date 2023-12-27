@@ -13,3 +13,5 @@ This is a take home test.
 then visit --> http://localhost:3000
 
 🐱
+
+![screenshot](https://github.com/tbarna-jay/memcat/blob/main/screenshot.png?raw=true)
