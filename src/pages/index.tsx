@@ -29,20 +29,21 @@ export default function Home() {
       userBName,
       activeUser,
       isOpen,
+      finish,
     },
     dispatch,
     cards,
     onActivateCard,
-    finish,
     startNewGame,
-    openModal,
-    setImageUrlsSource,
   } = useGameLogic();
 
   useEffect(() => {
     if (!error && !loading && imageUrls.length) {
       const cutArray = imageUrls.slice(0, 8);
-      setImageUrlsSource([...cutArray, ...cutArray]);
+      dispatch({
+        type: "SET_IMAGE_SOURCES",
+        payload: [...cutArray, ...cutArray],
+      });
     }
   }, [error, imageUrls, loading]);
 
@@ -66,7 +67,7 @@ export default function Home() {
           isOpen={isOpen}
           finish={finish}
         />
-        <NewGameButton openModal={openModal} />
+        <NewGameButton openModal={() => dispatch({ type: "TOGGLE_OPEN" })} />
         <Modal
           startNewGame={startNewGame}
           isOpen={isOpen}

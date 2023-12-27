@@ -7,22 +7,28 @@ export enum activeUserType {
   B,
 }
 
-interface InitialStateType {
+type imageUrlsSourcesType = string[];
+
+interface StateType {
   pointsUserA: number;
   pointsUserB: number;
   userAName: string;
   userBName: string;
   activeUser: activeUserType;
   isOpen: boolean;
+  finish: boolean;
+  imageUrlsSources: imageUrlsSourcesType;
 }
 
-const initialState: InitialStateType = {
+const initialState: StateType = {
   pointsUserA: 0,
   pointsUserB: 0,
   userAName: "",
   userBName: "",
   activeUser: activeUserType.A,
   isOpen: true,
+  finish: false,
+  imageUrlsSources: [],
 };
 
 export type CommonActionType = {
@@ -32,12 +38,14 @@ export type CommonActionType = {
     | "SET_USER_A_NAME"
     | "SET_USER_B_NAME"
     | "TOGGLE_ACTIVE_USER"
-    | "TOGGLE_OPEN";
+    | "TOGGLE_OPEN"
+    | "SET_IMAGE_SOURCES"
+    | "FINISH";
 
-  payload?: string | boolean;
+  payload?: string | boolean | imageUrlsSourcesType;
 };
 
-const reducer = (state: InitialStateType, action: CommonActionType) => {
+const reducer = (state: StateType, action: CommonActionType): StateType => {
   switch (action.type) {
     case "INCREASE_USER_POINT":
       const isAlone = !state.userBName;
@@ -54,6 +62,7 @@ const reducer = (state: InitialStateType, action: CommonActionType) => {
         activeUser: activeUserType.A,
         pointsUserA: 0,
         pointsUserB: 0,
+        finish: false,
       };
     case "SET_USER_A_NAME":
       return { ...state, userAName: String(action.payload) };
@@ -72,6 +81,16 @@ const reducer = (state: InitialStateType, action: CommonActionType) => {
         ...state,
         isOpen: !state.isOpen,
       };
+    case "FINISH":
+      return {
+        ...state,
+        finish: true,
+      };
+    case "SET_IMAGE_SOURCES":
+      return {
+        ...state,
+        imageUrlsSources: action.payload as imageUrlsSourcesType,
+      };
     default:
       return state;
   }
@@ -80,12 +99,11 @@ const reducer = (state: InitialStateType, action: CommonActionType) => {
 const useGameLogic = () => {
   const [state, dispatch] = useReducer(reducer, initialState);
   const [cards, setCards] = useState<cardsType>({});
-  const [finish, setFinish] = useState(false);
   const [activeCards, setActiveCards] = useState<cardsType>({});
-  const [imageUrlsSource, setImageUrlsSource] = useState<string[]>([]);
 
   useEffect(() => {
-    if (Object.values(cards).every(({ selected }) => selected)) setFinish(true);
+    if (Object.values(cards).every(({ selected }) => selected))
+      dispatch({ type: "FINISH" });
   }, [cards]);
 
   useEffect(() => {
@@ -94,9 +112,8 @@ const useGameLogic = () => {
 
   const startNewGame = () => {
     dispatch({ type: "START_NEW_GAME" });
-    setFinish(false);
     setCards(
-      shuffleArray(imageUrlsSource).reduce((prev, url) => {
+      shuffleArray(state.imageUrlsSources).reduce((prev, url) => {
         prev[Math.random()] = {
           url,
           active: false,
@@ -158,10 +175,7 @@ const useGameLogic = () => {
     dispatch,
     cards,
     onActivateCard,
-    finish,
     startNewGame,
-    openModal: () => dispatch({ type: "TOGGLE_OPEN" }),
-    setImageUrlsSource,
   };
 };
 
