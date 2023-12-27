@@ -11,39 +11,27 @@ const mockCards = {
 
 describe("Board", () => {
   it("calls onActivateCard when a card is clicked", () => {
-    const onActivateCardMock = jest.fn();
+    const dispatch = jest.fn();
 
-    render(
-      <Board
-        cards={mockCards}
-        isOpen={false}
-        onActivateCard={onActivateCardMock}
-      />,
-    );
+    render(<Board cards={mockCards} isOpen={false} dispatch={dispatch} />);
 
     // Click a card
     fireEvent.click(screen.getByTestId("card1"));
 
-    // Check that onActivateCardMock was called
-    expect(onActivateCardMock).toHaveBeenCalledTimes(1);
+    // Check that dispatch was called
+    expect(dispatch).toHaveBeenCalledTimes(1);
   });
 
   it("doens't call onActivateCard when a selected card is clicked", () => {
-    const onActivateCardMock = jest.fn();
+    const dispatch = jest.fn();
 
-    render(
-      <Board
-        cards={mockCards}
-        isOpen={false}
-        onActivateCard={onActivateCardMock}
-      />,
-    );
+    render(<Board cards={mockCards} isOpen={false} dispatch={dispatch} />);
 
     // Click a card
     fireEvent.click(screen.getByTestId("card2"));
 
-    // Check that onActivateCardMock was called
-    expect(onActivateCardMock).toHaveBeenCalledTimes(0);
+    // Check that dispatch was called
+    expect(dispatch).toHaveBeenCalledTimes(0);
   });
 
   // Add more test cases as needed

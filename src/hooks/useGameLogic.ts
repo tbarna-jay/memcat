@@ -1,4 +1,4 @@
-import { useEffect, useReducer, useState } from "react";
+import { useEffect, useReducer } from "react";
 import shuffleArray from "../helpers/shuffleArray";
 import type { cardType, cardsType } from "../pages";
 
@@ -19,6 +19,7 @@ interface StateType {
   finish: boolean;
   imageUrlsSources: imageUrlsSourcesType;
   activeCards: cardsType;
+  cards: cardsType;
 }
 
 const initialState: StateType = {
@@ -31,6 +32,7 @@ const initialState: StateType = {
   finish: false,
   imageUrlsSources: [],
   activeCards: {} as cardsType,
+  cards: {} as cardsType,
 };
 
 export type CommonActionType = {
@@ -42,10 +44,13 @@ export type CommonActionType = {
     | "TOGGLE_ACTIVE_USER"
     | "TOGGLE_OPEN"
     | "SET_IMAGE_SOURCES"
-    | "SET_ACTIVE_CARDS"
+    | "SET_ACTIVE_CARD"
+    | "RESET_ACTIVE_CARD"
+    | "SET_CARDS"
     | "FINISH";
   payload?: {
     card?: cardType;
+    cards?: cardsType;
     images?: imageUrlsSourcesType;
     userName?: string;
     match?: boolean;
@@ -71,12 +76,22 @@ const reducer = (state: StateType, action: CommonActionType): StateType => {
         pointsUserA: 0,
         pointsUserB: 0,
         finish: false,
+        cards: shuffleArray(state.imageUrlsSources).reduce((prev, url) => {
+          prev[Math.random()] = {
+            url,
+            active: false,
+            selected: false,
+          };
+          return prev;
+        }, {} as cardsType),
       };
     case "SET_USER_A_NAME":
       return { ...state, userAName: String(action.payload?.userName) };
     case "SET_USER_B_NAME":
       return { ...state, userBName: String(action.payload?.userName) };
     case "TOGGLE_ACTIVE_USER":
+      if (!state.userAName || !state.userBName || !action.payload?.match)
+        return state;
       return {
         ...state,
         activeUser:
@@ -100,16 +115,34 @@ const reducer = (state: StateType, action: CommonActionType): StateType => {
         imageUrlsSources:
           action.payload?.images ?? ([] as imageUrlsSourcesType),
       };
-    case "SET_ACTIVE_CARDS":
-      const card =
-        action?.payload?.id && action?.payload?.card
-          ? { [action?.payload?.id || ""]: action?.payload?.card }
-          : {};
+    case "SET_ACTIVE_CARD":
+      if (!action?.payload?.card || !action?.payload?.id) return state;
+      if (Object.keys(state.activeCards).length >= 2) return state;
+      const activeCard = {
+        [action?.payload?.id]: {
+          ...action?.payload?.card,
+          active: true,
+        },
+      };
       return {
         ...state,
+        cards: { ...state.cards, ...activeCard },
         activeCards: {
           ...state.activeCards,
-          ...card,
+          ...activeCard,
+        },
+      };
+    case "RESET_ACTIVE_CARD":
+      return {
+        ...state,
+        activeCards: {},
+      };
+    case "SET_CARDS":
+      return {
+        ...state,
+        cards: {
+          ...state.cards,
+          ...(action?.payload?.cards ?? {}),
         },
       };
     default:
@@ -119,30 +152,15 @@ const reducer = (state: StateType, action: CommonActionType): StateType => {
 
 const useGameLogic = () => {
   const [state, dispatch] = useReducer(reducer, initialState);
-  const [cards, setCards] = useState<cardsType>({});
 
   useEffect(() => {
-    if (Object.values(cards).every(({ selected }) => selected))
+    if (Object.values(state.cards).every(({ selected }) => selected))
       dispatch({ type: "FINISH" });
-  }, [cards]);
+  }, [state.cards]);
 
   useEffect(() => {
     if (Object.keys(state.activeCards).length) evaluate();
   }, [state.activeCards]);
-
-  const startNewGame = () => {
-    dispatch({ type: "START_NEW_GAME" });
-    setCards(
-      shuffleArray(state.imageUrlsSources).reduce((prev, url) => {
-        prev[Math.random()] = {
-          url,
-          active: false,
-          selected: false,
-        };
-        return prev;
-      }, {} as cardsType),
-    );
-  };
 
   const isCard = (obj: unknown): obj is cardType =>
     typeof obj === "object" && obj !== null && "url" in obj;
@@ -166,36 +184,26 @@ const useGameLogic = () => {
     }
 
     setTimeout(() => {
-      setCards({
-        ...cards,
-        ...{
-          [id1]: { ...card1, active: false, selected },
-          [id2]: { ...card2, active: false, selected },
+      dispatch({
+        type: "SET_CARDS",
+        payload: {
+          cards: {
+            ...{
+              [id1]: { ...card1, active: false, selected },
+              [id2]: { ...card2, active: false, selected },
+            },
+          },
         },
       });
-      dispatch({ type: "SET_ACTIVE_CARDS" });
+      dispatch({ type: "RESET_ACTIVE_CARD" });
       dispatch({ type: "INCREASE_USER_POINT", payload: { match: selected } });
-      if (state.userAName && state.userBName && !selected) {
-        dispatch({ type: "TOGGLE_ACTIVE_USER" });
-      }
+      dispatch({ type: "TOGGLE_ACTIVE_USER", payload: { match: selected } });
     }, 400);
-  };
-
-  const onActivateCard = (id: string, card: cardType) => {
-    if (Object.keys(state.activeCards).length >= 2) return;
-    setCards((_cards) => {
-      _cards[id] = { ...card, active: true };
-      return _cards;
-    });
-    dispatch({ type: "SET_ACTIVE_CARDS", payload: { card, id } });
   };
 
   return {
     state,
     dispatch,
-    cards,
-    onActivateCard,
-    startNewGame,
   };
 };
 

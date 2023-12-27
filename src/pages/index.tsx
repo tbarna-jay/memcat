@@ -30,11 +30,9 @@ export default function Home() {
       activeUser,
       isOpen,
       finish,
+      cards,
     },
     dispatch,
-    cards,
-    onActivateCard,
-    startNewGame,
   } = useGameLogic();
 
   useEffect(() => {
@@ -57,7 +55,7 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className="relative h-screen  w-screen bg-blue-300">
-        <Board cards={cards} isOpen={isOpen} onActivateCard={onActivateCard} />
+        <Board cards={cards} isOpen={isOpen} dispatch={dispatch} />
         <ScoreDisplay
           stepsUserA={pointsUserA}
           stepsUserB={pointsUserB}
@@ -69,7 +67,6 @@ export default function Home() {
         />
         <NewGameButton openModal={() => dispatch({ type: "TOGGLE_OPEN" })} />
         <Modal
-          startNewGame={startNewGame}
           isOpen={isOpen}
           userAName={userAName}
           userBName={userBName}

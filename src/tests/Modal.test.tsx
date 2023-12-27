@@ -5,17 +5,10 @@ import React from "react";
 
 describe("Modal", () => {
   it("renders without crashing", () => {
-    const startNewGameMock = jest.fn();
     const dispatch = jest.fn();
 
     render(
-      <Modal
-        startNewGame={startNewGameMock}
-        dispatch={dispatch}
-        userAName=""
-        userBName=""
-        isOpen={true}
-      />,
+      <Modal dispatch={dispatch} userAName="" userBName="" isOpen={true} />,
     );
 
     // You can add more specific assertions based on your component's content
@@ -24,59 +17,37 @@ describe("Modal", () => {
   });
 
   it("doesn't call startNewGame when button is clicked when non input filled", async () => {
-    const startNewGameMock = jest.fn();
     const dispatch = jest.fn();
 
     render(
-      <Modal
-        startNewGame={startNewGameMock}
-        dispatch={dispatch}
-        userAName=""
-        userBName=""
-        isOpen={true}
-      />,
+      <Modal dispatch={dispatch} userAName="" userBName="" isOpen={true} />,
     );
 
     // Click the "Play" button
     fireEvent.click(screen.getByText("Play"));
 
-    // Check that startNewGameMock was called
-    expect(startNewGameMock).toHaveBeenCalledTimes(0);
+    expect(dispatch).toHaveBeenCalledTimes(0);
   });
 
   it("calls startNewGame when button is clicked when an input filled", async () => {
-    const startNewGameMock = jest.fn();
     const dispatch = jest.fn();
 
     render(
-      <Modal
-        startNewGame={startNewGameMock}
-        dispatch={dispatch}
-        userAName="a"
-        userBName="a"
-        isOpen={true}
-      />,
+      <Modal dispatch={dispatch} userAName="a" userBName="a" isOpen={true} />,
     );
 
     // Click the "Play" button
     fireEvent.click(screen.getByText("Play"));
 
     // Check that startNewGameMock was called
-    expect(startNewGameMock).toHaveBeenCalledTimes(1);
+    expect(dispatch).toHaveBeenCalledTimes(1);
   });
 
   it("updates user names when input values change", async () => {
-    const startNewGameMock = jest.fn();
     const dispatch = jest.fn();
 
     render(
-      <Modal
-        startNewGame={startNewGameMock}
-        dispatch={dispatch}
-        userAName="a"
-        userBName="a"
-        isOpen={true}
-      />,
+      <Modal dispatch={dispatch} userAName="a" userBName="a" isOpen={true} />,
     );
 
     // Type into the "User A" input
@@ -105,7 +76,7 @@ describe("Modal", () => {
     fireEvent.click(screen.getByText("Play"));
 
     // Check that startNewGameMock was called
-    expect(startNewGameMock).toHaveBeenCalledTimes(1);
+    expect(dispatch).toHaveBeenCalledTimes(3);
   });
 
   // Add more test cases as needed

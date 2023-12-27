@@ -2,20 +2,13 @@ import React, { useEffect, type FC, useState, type Dispatch } from "react";
 import type { CommonActionType } from "../hooks/useGameLogic";
 
 type ModalProps = {
-  startNewGame: () => void;
   isOpen: boolean;
   userAName: string;
   userBName: string;
   dispatch: Dispatch<CommonActionType>;
 };
 
-const Modal: FC<ModalProps> = ({
-  startNewGame,
-  userAName,
-  userBName,
-  isOpen,
-  dispatch,
-}) => {
+const Modal: FC<ModalProps> = ({ userAName, userBName, isOpen, dispatch }) => {
   const disabled = !userAName && !userBName;
   const [overlay, setOverlay] = useState(() => isOpen);
   useEffect(() => {
@@ -99,7 +92,7 @@ const Modal: FC<ModalProps> = ({
               className={`${
                 disabled ? "bg-gray-300" : "bg-blue-600 hover:bg-blue-800"
               } inline-flex w-full justify-center rounded-md px-3 py-2 text-sm font-semibold text-white shadow-sm  sm:ml-3 sm:w-auto`}
-              onClick={startNewGame}
+              onClick={() => dispatch({ type: "START_NEW_GAME" })}
             >
               Play {!!userAName && !userBName && "alone"}
             </button>

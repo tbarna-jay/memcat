@@ -1,14 +1,15 @@
-import React, { type FC } from "react";
-import type { cardType, cardsType } from "../pages";
+import React, { type FC, type Dispatch } from "react";
+import type { cardsType } from "../pages";
 import Card from "../components/Card";
+import type { CommonActionType } from "../hooks/useGameLogic";
 
 type BoardProps = {
   cards: cardsType;
   isOpen: boolean;
-  onActivateCard: (id: string, card: cardType) => void;
+  dispatch: Dispatch<CommonActionType>;
 };
 
-const Board: FC<BoardProps> = ({ cards, isOpen, onActivateCard }) => (
+const Board: FC<BoardProps> = ({ cards, isOpen, dispatch }) => (
   <div className="mx-auto flex min-h-screen max-w-3xl flex-col items-center justify-center ">
     <div
       className={`${
@@ -24,7 +25,9 @@ const Board: FC<BoardProps> = ({ cards, isOpen, onActivateCard }) => (
               url={card.url}
               selected={card.selected}
               active={card.active}
-              onClick={() => onActivateCard(id, card)}
+              onClick={() =>
+                dispatch({ type: "SET_ACTIVE_CARD", payload: { card, id } })
+              }
             />
           ))}
         </div>
