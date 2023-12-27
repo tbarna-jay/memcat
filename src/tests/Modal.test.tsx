@@ -1,18 +1,17 @@
 import "@testing-library/jest-dom";
 import { render, screen, fireEvent } from "@testing-library/react";
 import Modal from "../components/Modal";
+import React from "react";
 
 describe("Modal", () => {
   it("renders without crashing", () => {
     const startNewGameMock = jest.fn();
-    const setUserANameMock = jest.fn();
-    const setUserBNameMock = jest.fn();
+    const dispatch = jest.fn();
 
     render(
       <Modal
         startNewGame={startNewGameMock}
-        setUserAName={setUserANameMock}
-        setUserBName={setUserBNameMock}
+        dispatch={dispatch}
         userAName=""
         userBName=""
         isOpen={true}
@@ -26,14 +25,12 @@ describe("Modal", () => {
 
   it("doesn't call startNewGame when button is clicked when non input filled", async () => {
     const startNewGameMock = jest.fn();
-    const setUserANameMock = jest.fn();
-    const setUserBNameMock = jest.fn();
+    const dispatch = jest.fn();
 
     render(
       <Modal
         startNewGame={startNewGameMock}
-        setUserAName={setUserANameMock}
-        setUserBName={setUserBNameMock}
+        dispatch={dispatch}
         userAName=""
         userBName=""
         isOpen={true}
@@ -49,14 +46,12 @@ describe("Modal", () => {
 
   it("calls startNewGame when button is clicked when an input filled", async () => {
     const startNewGameMock = jest.fn();
-    const setUserANameMock = jest.fn();
-    const setUserBNameMock = jest.fn();
+    const dispatch = jest.fn();
 
     render(
       <Modal
         startNewGame={startNewGameMock}
-        setUserAName={setUserANameMock}
-        setUserBName={setUserBNameMock}
+        dispatch={dispatch}
         userAName="a"
         userBName="a"
         isOpen={true}
@@ -72,14 +67,12 @@ describe("Modal", () => {
 
   it("updates user names when input values change", async () => {
     const startNewGameMock = jest.fn();
-    const setUserANameMock = jest.fn();
-    const setUserBNameMock = jest.fn();
+    const dispatch = jest.fn();
 
     render(
       <Modal
         startNewGame={startNewGameMock}
-        setUserAName={setUserANameMock}
-        setUserBName={setUserBNameMock}
+        dispatch={dispatch}
         userAName="a"
         userBName="a"
         isOpen={true}
@@ -92,7 +85,10 @@ describe("Modal", () => {
     });
 
     // Check that setUserANameMock was called with the correct value
-    expect(setUserANameMock).toHaveBeenCalledWith("UserA");
+    expect(dispatch).toHaveBeenCalledWith({
+      type: "SET_USER_A_NAME",
+      payload: "UserA",
+    });
 
     // Type into the "User B" input
     fireEvent.change(screen.getByLabelText("User B:"), {
@@ -100,7 +96,10 @@ describe("Modal", () => {
     });
 
     // Check that setUserBNameMock was called with the correct value
-    expect(setUserBNameMock).toHaveBeenCalledWith("UserB");
+    expect(dispatch).toHaveBeenCalledWith({
+      type: "SET_USER_B_NAME",
+      payload: "UserB",
+    });
 
     // Click the "Play" button
     fireEvent.click(screen.getByText("Play"));

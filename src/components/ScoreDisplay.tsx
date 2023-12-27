@@ -1,5 +1,6 @@
 import React, { type FC } from "react";
 import getFinishText from "../helpers/getFinishText";
+import { activeUserType } from "../hooks/useGameLogic";
 
 type ScoreDisplayProps = {
   stepsUserA: number;
@@ -8,7 +9,7 @@ type ScoreDisplayProps = {
   userBName: string;
   isOpen: boolean;
   finish: boolean;
-  activeUser: "userA" | "userB";
+  activeUser: activeUserType;
 };
 
 const ScoreDisplay: FC<ScoreDisplayProps> = ({
@@ -32,7 +33,7 @@ const ScoreDisplay: FC<ScoreDisplayProps> = ({
               {" "}
               {stepsUserA} {userBName ? "score" : "steps"}
             </h2>
-            {activeUser === "userA" && userBName && (
+            {activeUser === activeUserType.A && userBName && (
               <div className="inline-flex items-center rounded-md bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700 ring-1 ring-inset ring-blue-700/10">
                 Active
               </div>
@@ -44,7 +45,7 @@ const ScoreDisplay: FC<ScoreDisplayProps> = ({
         <div className="fixed bottom-3 right-3 ml-2">
           <div className="flex justify-between rounded-lg bg-white px-4 py-2 shadow">
             <div className="flex items-center">
-              {activeUser === "userB" && (
+              {activeUser === activeUserType.B && (
                 <div className="mr-2 inline-flex items-center rounded-md bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700 ring-1 ring-inset ring-blue-700/10">
                   Active
                 </div>

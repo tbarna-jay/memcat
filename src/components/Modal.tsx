@@ -1,21 +1,20 @@
-import React, { useEffect, type FC, useState } from "react";
+import React, { useEffect, type FC, useState, type Dispatch } from "react";
+import type { CommonActionType } from "../hooks/useGameLogic";
 
 type ModalProps = {
   startNewGame: () => void;
-  setUserAName: (name: string) => void;
-  setUserBName: (name: string) => void;
   isOpen: boolean;
   userAName: string;
   userBName: string;
+  dispatch: Dispatch<CommonActionType>;
 };
 
 const Modal: FC<ModalProps> = ({
   startNewGame,
-  setUserAName,
-  setUserBName,
   userAName,
   userBName,
   isOpen,
+  dispatch,
 }) => {
   const disabled = !userAName && !userBName;
   const [overlay, setOverlay] = useState(() => isOpen);
@@ -58,7 +57,7 @@ const Modal: FC<ModalProps> = ({
                         placeholder="Name"
                         value={userAName}
                         onChange={({ target: { value } }) =>
-                          setUserAName(value)
+                          dispatch({ type: "SET_USER_A_NAME", payload: value })
                         }
                       />
                     </div>
@@ -78,7 +77,7 @@ const Modal: FC<ModalProps> = ({
                         placeholder="Name"
                         value={userBName}
                         onChange={({ target: { value } }) =>
-                          setUserBName(value)
+                          dispatch({ type: "SET_USER_B_NAME", payload: value })
                         }
                       />
                     </div>

@@ -1,6 +1,7 @@
 import "@testing-library/jest-dom";
 import { render, screen, fireEvent } from "@testing-library/react";
 import Board from "../components/Board";
+import React from "react";
 
 const mockCards = {
   card1: { url: "/image1.jpg", selected: false, active: false },

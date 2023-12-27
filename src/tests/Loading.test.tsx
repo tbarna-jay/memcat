@@ -1,6 +1,7 @@
 import "@testing-library/jest-dom";
 import { render, screen } from "@testing-library/react";
 import Loading from "../components/Loading";
+import React from "react";
 
 describe("Loading", () => {
   it("renders without crashing", () => {

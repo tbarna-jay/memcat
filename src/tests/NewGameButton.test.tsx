@@ -1,6 +1,7 @@
 import { render, screen, fireEvent } from "@testing-library/react";
 import NewGameButton from "../components/NewGameButton";
 import "@testing-library/jest-dom";
+import React from "react";
 
 describe("NewGameButton", () => {
   it("renders without crashing", () => {

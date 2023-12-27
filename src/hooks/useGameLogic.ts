@@ -1,22 +1,88 @@
-import { useEffect, useState } from "react";
+import { useEffect, useReducer, useState } from "react";
 import shuffleArray from "../helpers/shuffleArray";
 import type { cardType, cardsType } from "../pages";
 
+export enum activeUserType {
+  A,
+  B,
+}
+
+interface InitialStateType {
+  pointsUserA: number;
+  pointsUserB: number;
+  userAName: string;
+  userBName: string;
+  activeUser: activeUserType;
+  isOpen: boolean;
+}
+
+const initialState: InitialStateType = {
+  pointsUserA: 0,
+  pointsUserB: 0,
+  userAName: "",
+  userBName: "",
+  activeUser: activeUserType.A,
+  isOpen: true,
+};
+
+export type CommonActionType = {
+  type:
+    | "INCREASE_USER_POINT"
+    | "START_NEW_GAME"
+    | "SET_USER_A_NAME"
+    | "SET_USER_B_NAME"
+    | "TOGGLE_ACTIVE_USER"
+    | "TOGGLE_OPEN";
+
+  payload?: string | boolean;
+};
+
+const reducer = (state: InitialStateType, action: CommonActionType) => {
+  switch (action.type) {
+    case "INCREASE_USER_POINT":
+      const isAlone = !state.userBName;
+      if (isAlone) return { ...state, pointsUserA: state.pointsUserA + 1 };
+      if (!action.payload) return state;
+      if (state.activeUser === activeUserType.A) {
+        return { ...state, pointsUserA: state.pointsUserA + 1 };
+      }
+      return { ...state, pointsUserB: state.pointsUserB + 1 };
+    case "START_NEW_GAME":
+      return {
+        ...state,
+        isOpen: false,
+        activeUser: activeUserType.A,
+        pointsUserA: 0,
+        pointsUserB: 0,
+      };
+    case "SET_USER_A_NAME":
+      return { ...state, userAName: String(action.payload) };
+    case "SET_USER_B_NAME":
+      return { ...state, userBName: String(action.payload) };
+    case "TOGGLE_ACTIVE_USER":
+      return {
+        ...state,
+        activeUser:
+          state.activeUser === activeUserType.A
+            ? activeUserType.B
+            : activeUserType.A,
+      };
+    case "TOGGLE_OPEN":
+      return {
+        ...state,
+        isOpen: !state.isOpen,
+      };
+    default:
+      return state;
+  }
+};
+
 const useGameLogic = () => {
-  const [pointsUserA, setStepUserA] = useState(0);
-  const [pointsUserB, setStepUserB] = useState(0);
-  const [activeUser, setActiveUser] = useState<"userA" | "userB">("userA");
-  const [userAName, setUserAName] = useState("");
-  const [userBName, setUserBName] = useState("");
+  const [state, dispatch] = useReducer(reducer, initialState);
   const [cards, setCards] = useState<cardsType>({});
   const [finish, setFinish] = useState(false);
   const [activeCards, setActiveCards] = useState<cardsType>({});
-  const [isOpen, setIsOpen] = useState(true);
   const [imageUrlsSource, setImageUrlsSource] = useState<string[]>([]);
-
-  const openModal = () => {
-    setIsOpen(true);
-  };
 
   useEffect(() => {
     if (Object.values(cards).every(({ selected }) => selected)) setFinish(true);
@@ -26,11 +92,8 @@ const useGameLogic = () => {
     if (Object.keys(activeCards).length) evaluate();
   }, [activeCards]);
 
-  const resetGame = () => {
-    setActiveUser("userA");
-    setIsOpen(false);
-    setStepUserA(0);
-    setStepUserB(0);
+  const startNewGame = () => {
+    dispatch({ type: "START_NEW_GAME" });
     setFinish(false);
     setCards(
       shuffleArray(imageUrlsSource).reduce((prev, url) => {
@@ -46,16 +109,6 @@ const useGameLogic = () => {
 
   const isCard = (obj: unknown): obj is cardType =>
     typeof obj === "object" && obj !== null && "url" in obj;
-
-  const countSteps = (match: boolean) => {
-    const isAlone = !userBName;
-    if (isAlone) return setStepUserA((steps) => steps + 1);
-    if (!match) return;
-    const isActiveUserA = activeUser === "userA";
-    isActiveUserA
-      ? setStepUserA((steps) => steps + 1)
-      : setStepUserB((steps) => steps + 1);
-  };
 
   const evaluate = () => {
     const [card1, card2] = Object.values(activeCards);
@@ -84,11 +137,9 @@ const useGameLogic = () => {
         },
       });
       setActiveCards({});
-      countSteps(selected);
-      if (userAName && userBName && !selected) {
-        setActiveUser((activeUser) =>
-          activeUser === "userA" ? "userB" : "userA",
-        );
+      dispatch({ type: "INCREASE_USER_POINT", payload: selected });
+      if (state.userAName && state.userBName && !selected) {
+        dispatch({ type: "TOGGLE_ACTIVE_USER" });
       }
     }, 400);
   };
@@ -103,19 +154,13 @@ const useGameLogic = () => {
   };
 
   return {
+    state,
+    dispatch,
     cards,
     onActivateCard,
-    pointsUserA,
-    pointsUserB,
-    userAName,
-    userBName,
-    activeUser,
     finish,
-    resetGame,
-    setUserAName,
-    setUserBName,
-    isOpen,
-    openModal,
+    startNewGame,
+    openModal: () => dispatch({ type: "TOGGLE_OPEN" }),
     setImageUrlsSource,
   };
 };

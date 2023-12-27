@@ -22,18 +22,19 @@ export type cardsType = Record<string, cardType>;
 export default function Home() {
   const { imageUrls, error, loading, progressText } = useImageLoader(apiUrl);
   const {
+    state: {
+      pointsUserA,
+      pointsUserB,
+      userAName,
+      userBName,
+      activeUser,
+      isOpen,
+    },
+    dispatch,
     cards,
     onActivateCard,
-    pointsUserA,
-    pointsUserB,
-    userAName,
-    userBName,
-    activeUser,
     finish,
-    resetGame,
-    setUserAName,
-    setUserBName,
-    isOpen,
+    startNewGame,
     openModal,
     setImageUrlsSource,
   } = useGameLogic();
@@ -67,12 +68,11 @@ export default function Home() {
         />
         <NewGameButton openModal={openModal} />
         <Modal
-          startNewGame={resetGame}
+          startNewGame={startNewGame}
           isOpen={isOpen}
           userAName={userAName}
           userBName={userBName}
-          setUserAName={setUserAName}
-          setUserBName={setUserBName}
+          dispatch={dispatch}
         />
       </main>
     </>

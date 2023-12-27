@@ -2,6 +2,8 @@ import { render, screen } from "@testing-library/react";
 import ScoreDisplay from "../components/ScoreDisplay";
 import { cleanup } from "@testing-library/react";
 import "@testing-library/jest-dom";
+import { activeUserType } from "../hooks/useGameLogic";
+import React from "react";
 
 afterEach(cleanup);
 
@@ -15,7 +17,7 @@ describe("ScoreDisplay", () => {
         userBName="UserB"
         isOpen={false}
         finish={false}
-        activeUser="userA"
+        activeUser={activeUserType.A}
       />,
     );
 

@@ -1,6 +1,7 @@
 import "@testing-library/jest-dom";
 import { render, screen, fireEvent } from "@testing-library/react";
 import Card from "../components/Card";
+import React from "react";
 
 describe("Card", () => {
   it("renders without crashing", () => {
